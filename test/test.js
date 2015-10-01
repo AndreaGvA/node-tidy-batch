@@ -1,5 +1,6 @@
 'use strict';
-var should = require('chai').should(),
+var chai = require('chai'),
+should=chai.should(),
 batch = require('../index.js'),
 fs=require('fs');
 
@@ -52,7 +53,33 @@ describe("tidy-batch", function() {
             
       });
       
-     
-      
+      it("should return files with more than 0 bytes", function(done){
+          var inputDir ="./test/toclean/",
+            outputDir="./test/output/",
+            control="",
+            $len=0;
+            
+            fs.readdir(outputDir, function( error, files ) {
+                var readFiles = function(index) {
+                    
+                    if ( index != files.length ) {
+                        fs.readFile( outputDir+files[index], 'utf-8', function( error, data ) {
+                            if ( error ) {
+                                console.log( "Error reading file. ", error );
+                            } else {
+                                data.length.should.not.equal(0);
+                                $len++;
+                                if($len==files.length){
+                                     done();
+                                 }
+                                 readFiles(index + 1);
+                            }
+                        });
+                    }
+    
+                };
+                readFiles(0);
+            });
+      });
    });
 });
