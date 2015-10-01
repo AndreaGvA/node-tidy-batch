@@ -22,11 +22,18 @@ npm install tidy-batch
     "word-2000":truegit 
 };
  
-batch.clean(inputDir, outputDir, opts, function(num, bytes, array){
+var clean= new batch.clean(inputDir, outputDir, opts, function(num, bytes, array){
     console.log(num);
     console.log(bytes);
     console.log(array);
 });
+
+//You can monitor the progress with
+clean.on("progress", function(num, tot){
+	console.log(num);
+	console.log(tot);
+});
+
 ```
 
 ####Options

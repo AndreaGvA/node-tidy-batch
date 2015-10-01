@@ -4,7 +4,6 @@ should=chai.should(),
 batch = require('../index.js'),
 fs=require('fs');
 
-
 describe("tidy-batch", function() {
   describe(".clean()", function() {
      it("should convert all the files in the directory", function(done){
@@ -19,11 +18,11 @@ describe("tidy-batch", function() {
 			    "word-2000":true
 			};
 			
-			batch.clean(inputDir, outputDir, opts, function(check, bytes, array){
+			var emit = new batch.clean(inputDir, outputDir, opts, function(check, bytes, array){
 				fs.readdir(outputDir, function( error, files ) {
 					
-					control=files.length;
-					control.should.equal(check+1);
+					control=files.length-1;
+					control.should.equal(check);
 					done();
 				});
 			});
@@ -42,7 +41,7 @@ describe("tidy-batch", function() {
                 "word-2000":true
             };
             
-            batch.clean(inputDir, outputDir, opts, function(check, bytes, array){
+            var emit = new batch.clean(inputDir, outputDir, opts, function(check, bytes, array){
                 fs.readdir(outputDir, function( error, files ) {
                     
                     array.should.be.an("array");
@@ -50,7 +49,6 @@ describe("tidy-batch", function() {
                     done();
                 });
             });
-            
       });
       
       it("should return files with more than 0 bytes", function(done){
@@ -81,5 +79,36 @@ describe("tidy-batch", function() {
                 readFiles(0);
             });
       });
+       it("should return the progress from n to tot", function(done){
+            var inputDir ="./test/toclean/",
+            outputDir="./test/output/",
+            control="";
+
+            var opts = {
+                doctype: 'html5',
+                hideComments: true, //  multi word options can use a hyphen or "camel case"
+                indent: true,
+                "word-2000":true
+            };
+            
+            var clean = new batch.clean(inputDir, outputDir, opts);
+            var check=false;
+            var tt=0;
+            clean.on("progress", function(n, tot){
+                if(n<=tot) {
+                    check=true;
+                } else {
+                    check=false;
+                }
+                tt++;
+                //n.should.be.most(tot);
+                //console.log(n+" di "+tot);
+                if(n===tot) {
+                    check.should.be.true;
+                    tt.should.equal(99);
+                    done();
+                }
+            });
+       });
    });
 });

@@ -1,13 +1,18 @@
 'use strict';
 var fs = require('fs');
 var tidy = require('htmltidy').tidy;
+var util = require('util'),
+    EventEmitter = require('events').EventEmitter;
 
-var self=module.exports = {
-	clean: function(inputDir, outputDir, opts, callback){
-	    
-		fs.readdir(inputDir, function( error, files ) {
-	        if ( error ) {
-	            console.log("Error listing file contents.");
+var tidyBatch=Object.create(null);
+
+	tidyBatch.clean=function(inputDir, outputDir, opts, callback){
+	    EventEmitter.call(this);
+        var self=this;
+	    fs.readdir(inputDir, function( errors, files ) {
+	        
+	        if ( errors ) {
+	            console.log("errors listing file contents.");
 	        } else {
 	            var totalBytes = 0;
 				var length=files.length;
@@ -17,12 +22,13 @@ var self=module.exports = {
 	            var readFiles = function(index) {
 	            	
 	                if ( index != files.length ) {
-	                    fs.readFile( inputDir+files[index], 'utf-8', function( error, data ) {
-	                        if ( error ) {
-	                            console.log( "Error reading file. ", error );
+	                    fs.readFile( inputDir+files[index], 'utf-8', function( errors, data ) {
+	                        if ( errors ) {
+	                            console.log( "errors reading file. ", errors );
 	                        } else {
-	                            self.tidy(data, opts, inputDir, outputDir, files, index, files.length, totalBytes, created, result, callback);
+	                            tidyBatch.tidy(data, opts, inputDir, outputDir, files, index, files.length, totalBytes, created, result, callback);
 	                            created++;
+	                            self.emit("progress", created, files.length);
 	                            totalBytes += data.length;
 	                            readFiles(index + 1);
 	                        }
@@ -34,30 +40,33 @@ var self=module.exports = {
 	            readFiles(0);
 	        }
 	    });
-	},
-	tidy: function(data, opts, inputDir, outputDir, files, index, length, totalBytes, created, result, callback) {
+	};
+	tidyBatch.tidy= function(data, opts, inputDir, outputDir, files, index, length, totalBytes, created, result, callback) {
 	    
 	    
 	    tidy(data, opts, function(err, html) {
           if (err) throw err;
               if(html=="") {
                   //console.log("html vuoto file: "+inputDir+files[index]);
-                  self.tidy(data, opts, inputDir, outputDir, files, index, length, totalBytes, created, result, callback);
+                  tidyBatch.tidy(data, opts, inputDir, outputDir, files, index, length, totalBytes, created, result, callback);
               } else {
                   fs.writeFile(outputDir+files[index], html, function(err) {
                     if(err) {
                         return console.log(err);
                     }
+                    
                     result[created]=outputDir+files[index];
                     if(created==length-1) {
                         if(!!callback) callback(files.length, totalBytes, result);
-                        console.log( "Done reading files. totalBytes = " + totalBytes );
+                        //console.log( "Done reading files. totalBytes = " + totalBytes );
                     }
                   }); 
               }
               
             
         });
-	}
-    
-};
+	};
+	
+util.inherits(tidyBatch.clean, EventEmitter);
+
+module.exports = tidyBatch;

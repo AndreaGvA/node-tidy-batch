@@ -1,6 +1,6 @@
 {
   "name": "tidy-batch",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Batch html convert using tidyhtml",
   "main": "index.js",
   "scripts": {
