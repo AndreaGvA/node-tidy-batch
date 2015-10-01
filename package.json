@@ -1,6 +1,6 @@
 {
   "name": "tidy-batch",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Batch html convert using tidyhtml",
   "main": "index.js",
   "scripts": {
@@ -13,8 +13,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^1.1.1",
-    "fs": "0.0.2",
     "htmltidy": "0.0.6"
   },
   "devDependencies": {
