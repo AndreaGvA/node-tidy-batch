@@ -19,7 +19,7 @@ npm install tidy-batch
     doctype: 'html5',
     hideComments: true, //  multi word options can use a hyphen or "camel case"
     indent: true,
-    "word-2000":truegit 
+    "word-2000":true 
 };
  
 var clean= new batch.clean(inputDir, outputDir, opts, function(num, bytes, array){
@@ -45,6 +45,6 @@ var opts = {
     doctype: 'html5',
     hideComments: true, //  multi word options can use a hyphen or "camel case"
     indent: true,
-    "word-2000":truegit 
+    "word-2000":true
 };
 ```
