@@ -29,9 +29,10 @@ var clean= new batch.clean(inputDir, outputDir, opts, function(num, bytes, array
 });
 
 //You can monitor the progress with
-clean.on("progress", function(num, tot){
+clean.on("progress", function(num, tot, file){
 	console.log(num);
 	console.log(tot);
+	console.log(file);
 });
 
 ```

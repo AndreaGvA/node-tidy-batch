@@ -28,7 +28,7 @@ var tidyBatch=Object.create(null);
 	                        } else {
 	                            tidyBatch.tidy(data, opts, inputDir, outputDir, files, index, files.length, totalBytes, created, result, callback);
 	                            created++;
-	                            self.emit("progress", created, files.length);
+	                            self.emit("progress", created, files.length, outputDir+files[index]);
 	                            totalBytes += data.length;
 	                            readFiles(index + 1);
 	                        }

@@ -94,7 +94,7 @@ describe("tidy-batch", function() {
             var clean = new batch.clean(inputDir, outputDir, opts);
             var check=false;
             var tt=0;
-            clean.on("progress", function(n, tot){
+            clean.on("progress", function(n, tot, file){
                 if(n<=tot) {
                     check=true;
                 } else {
